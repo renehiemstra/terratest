@@ -1,4 +1,4 @@
-import "terratestlang"
+import "terratest"
 
 local a = 1
 local b = 3 
