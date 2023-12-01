@@ -2,9 +2,9 @@
 terratest is a simple unittesting library for use in the [terra programming language](https://github.com/terralang/terra). It is written as a language extension of terra and provides several keywords: `test`, `testenv`, `testset`, and `terradef`. `test` signals a boolean terra expression, `testenv` provides a safe environment for writing tests, that may be organized in `testset`'s and `terradef` represents a block of terra code. 
 
 ## Installation and use
-Simply copy paste the file `terratestlang` into your folder and use the library by means of the statement
+Simply copy paste the file `terratest` into your folder and use the library by means of the statement
 ```
-import "terratestlang"
+import "terratest"
 ```
 ## Writing and evaluating tests
 Tests may combine both lua and terra code. For example, the following code directly evaluates a lua statement
@@ -32,7 +32,7 @@ If a test fails then the linenumber and filename of the test statement is printe
 ### Organizing tests in `testenv`
 Although tests can be used directly inline as shown above, it is useful to organize them inside a scoped environment called `testset`. This environement keeps track of some test statistics, which get printed to stdout. Here is an example
 ```
-import "terratestlang"           
+import "terratest"           
    
 local a = 1  
 local b = 3  
@@ -66,7 +66,7 @@ Notice that the test environment is given a name, which gets printed to stdout. 
 ### Organizing tests using `testset`
 `testset` provides another scoped environment that can be used within a `testenv`. A testset is also given a name and test statistics are printed out separately for each testset inside a test environment. For example,
 ```
-import "terratestlang"
+import "terratest"
 
 testenv "first test environement" do
   local z = 10
@@ -100,9 +100,6 @@ Test Environment: 	first test environement
   1/1 tests passed
 ```
 Both testsets reuse the lua and terra variables `z` and `x` defined in the beginning. In addition, the testsets have variables `y` and `p`, respectively, that can only be used inside the testset where they are defined.
-
-//### Setup and teardown
-//Most test frameworks provide setup and teardown facilities to allocate memory, reuse variables //and to free memory. Using terratest this can be done using a simple `terradef` block at the //beginning and end of a test environment. For example,
 
 
 
