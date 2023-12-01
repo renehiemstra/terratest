@@ -1,5 +1,5 @@
 # terratest
-terratest is a simple unittesting library for use in the [terra programming language](https://github.com/terralang/terra). It is written as a language extension of terra and provides several keywords: `test`, `testenv`, `testset`, and `terradef`. `test` signals a boolean terra expression, `testenv` provides a safe environment for writing tests, that may be organized in `testset`'s and `terradef` represents a block of terra code. 
+terratest is a simple unittesting library for use in the [terra programming language](https://github.com/terralang/terra). It is written as a language extension of terra and provides several keywords: `test`, `testenv`, `testset`, and `terradef`. `test` signals a boolean lua/terra expression, `testenv` provides a safe environment for writing tests, which may be organized in `testset`'s. Finally, `terradef` represents a block of terra code. 
 
 ## Installation and use
 Simply copy paste the file `terratest` into your folder and use the library by means of the statement
@@ -157,9 +157,9 @@ Test Environment: 	Vector implementation
 ```
 ### Future extensions
 I plan the following extensions:
-* A setup and teardown environment within the test environement that can be used to allocate and free heap variables.
-* Better/additional test statistics
-* Support for parameterized testsets of environments. Althought this is already possible, the testset names and environement names are currently not parameterizable.
+* A setup and teardown environment within the test environment that can be used to allocate and free heap variables.
+* Better / additional test statistics
+* Support for parameterized testsets or environments. Although this is already possible, the testset names and environment names are currently not parameterizable.
 
 If you have any other useful ideas, please let me know.
 
