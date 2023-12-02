@@ -30,7 +30,7 @@ If a test fails then the linenumber and filename of the test statement is printe
 `test` always expects a boolean result.
 
 ### Organizing tests in `testenv`
-Although tests can be used directly inline as shown above, it is useful to organize them inside a scoped environment called `testset`. This environement keeps track of some test statistics, which get printed to stdout. Here is an example
+Although tests can be used directly inline as shown above, it is useful to organize them inside a scoped environment called `testenv`. This environement keeps track of some test statistics, which get printed to stdout. Here is an example
 ```
 import "terratest"           
    
