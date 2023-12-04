@@ -1,12 +1,10 @@
-local ffi = require("ffi")
+local C = terralib.includec("stdio.h")
 
 format = terralib.newlist()
 format.normal = "\27[0m"
 format.bold = "\27[1m"
 format.red = "\27[31m"
 format.green = "\27[32m"
-
-local C = terralib.includec("stdio.h")
 
 local struct Stats{
     passed : int
@@ -69,6 +67,22 @@ end
 
 local function ProcessTestenv(self, lex)
     lex:expect("testenv") --open the testenv environment
+    
+    -- treat case of parameterized testenv                       
+    local isparametric = false                                   
+    local params = terralib.newlist()                            
+    if lex:matches("(") then                                     
+        lex:expect("(")                                          
+        repeat      
+            local name = lex:expect(lex.name).value              
+            lex:ref(name)                                        
+            params:insert(name)                                  
+        until not lex:nextif(",")                                
+        lex:expect(")")                                          
+        isparametric = true                                      
+    end             
+                    
+    --generate testset name and parse code  
     local testenvname = lex:expect(lex.string).value
     lex:expect("do")
     local luaexprs = lex:luastats() -- give control back to lua
@@ -84,9 +98,19 @@ local function ProcessTestenv(self, lex)
 
 	-- enter scope
 	self.scopelevel = 1  -- enter testenv, scopelevel 1
-	print("\n"..format.bold.."Test Environment: "..format.normal, testenvname)
-	local env = envfun()
-	addtoenv(env, self.env["scope1"]) --everything from scope level 1 should be accessible
+        local env = envfun()
+        addtoenv(env, self.env["scope1"]) --everything from scope level 1 should be accessible
+	
+	-- print parametric name
+	local parametricname = testenvname   
+        if isparametric then                 
+            parametricname = testenvname.."("..params[1].."="..tostring(env[params[1]])
+            for i=2,#params do               
+                parametricname = parametricname..","..params[i].."="..tostring(env[params[i]])
+            end                              
+            parametricname = parametricname..")"
+        end
+	print("\n"..format.bold.."Test Environment: "..format.normal, parametricname)
 
 	local f = function()
 	    luaexprs(env)
@@ -112,6 +136,22 @@ end
 
 local function ProcessTestset(self, lex)
     lex:expect("testset") --open the testset environment
+    
+    -- treat case of parameterized testset
+    local isparametric = false
+    local params = terralib.newlist()
+    if lex:matches("(") then
+	lex:expect("(")
+	repeat
+	    local name = lex:expect(lex.name).value
+	    lex:ref(name)
+	    params:insert(name)
+	until not lex:nextif(",")
+	lex:expect(")")
+	isparametric = true
+    end
+
+    --generate testset name and parse code
     local testsetname = lex:expect(lex.string).value
     lex:expect("do")
     local luaexprs = lex:luastats() --give control back to lua
@@ -142,10 +182,17 @@ local function ProcessTestset(self, lex)
 	   [terrastmts]
 	end
 	local stats = g() --extract test statistics
-		
 
 	-- process test statistics
-	printTestStats("\n  "..format.bold.."testset:\t\t"..format.normal..testsetname, stats)
+	local parametricname = testsetname
+	if isparametric then
+	    parametricname = testsetname.."("..params[1].."="..tostring(env[params[1]])
+	    for i=2,#params do
+		parametricname = parametricname..","..params[i].."="..tostring(env[params[i]])
+	    end
+	    parametricname = parametricname..")"
+	end
+	printTestStats("\n  "..format.bold.."testset:\t\t"..format.normal..parametricname, stats)
 
 	-- exit current scope
     	self.scopelevel = 1  --exit testset, back to scopelevel 1

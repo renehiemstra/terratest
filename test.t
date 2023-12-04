@@ -4,7 +4,7 @@ local a = 1
 local b = 3 
 
 test a*b==3
-test a+b==5
+test a+b==4
 
 
 testenv "first test environement" do
@@ -14,17 +14,18 @@ local c = 10
 terradef
   var x = 1
   var y = 2
-  y = 3
 end
 
 test x*y==2
 
-testset "my first testset" do
+local N = 2
+testset(N) "my first testset" do
 
   terradef
     var p = 0
   end
 
+  test N==2
   test a+b+p==4
   test a*b==3
   test a+b+c==14
