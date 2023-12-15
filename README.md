@@ -102,7 +102,7 @@ Test Environment: 	first test environement
 Both testsets reuse the lua and terra variables `z` and `x` defined in the beginning. In addition, the testsets have variables `y` and `p`, respectively, that can only be used inside the testset where they are defined.
 
 ### parameterized tests
-It is also possible to parameterize tests. Check out the following `Vector` class and tests
+It is also possible to parameterize tests. Check out the following `Vector` class and parameterized testsets
 ```
 SVector = terralib.memoize(function(T,N)
     local struct Vector{
@@ -132,35 +132,101 @@ end)
 import "terratest" -- using the terra unit test library
        
 testenv "Vector implementation" do
-  testset "fill" do
-    for _,T in pairs{int32,int64} do
-      for N=2,3 do 
-        local SVec = SVector(T,N)                      
-        terradef                              
-          var y = SVec.fill(3)
-        end
-        test y:size()==N
-        for i=0,N-1 do          
-          test y(i)==T(3)
-        end
+  
+for _,T in pairs{int32,int64} do
+  for N=2,3 do  
+
+    --parameterized testset      
+    testset(N,T) "fill" do
+      local SVec = SVector(T,N)                      
+      terradef                              
+        var y = SVec.fill(3)
+      end
+      test y:size()==N
+      for i=0,N-1 do          
+        test y(i)==T(3)
       end
     end
+
   end
 end
+
+end --testenv
 ```
 which prints out the following test results
 ```
 Test Environment: 	Vector implementation
 
-  testset:		fill
-  14/14 tests passed
+  testset:		fill(N=2,T=int32)
+  3/3 tests passed
+
+  testset:		fill(N=3,T=int32)
+  4/4 tests passed
+
+  testset:		fill(N=2,T=int64)
+  3/3 tests passed
+
+  testset:		fill(N=3,T=int64)
+  4/4 tests passed
 ```
+Alternatively we can parameterize the `testenv` as follows
+```
+for _,T in pairs{int32,int64} do
+  for N=2,3 do          
+       
+    --parameterized testenv        
+    testenv(N,T) "Vector implementation" do
+  
+      --parameterized testset          
+      testset "fill" do
+        local SVec = SVector(T,N)                          
+        terradef                                  
+          var y = SVec.fill(3)
+        end 
+        test y:size()==N
+        for i=0,N-1 do              
+          test y(i)==T(3)
+        end 
+      end 
+  
+    end --testenv
+
+  end --N
+end --T
+```
+which prints out the results as follows:
+```
+Test Environment: 	Vector implementation(N=2,T=int32)
+
+  testset:		fill
+  3/3 tests passed
+
+  inline tests
+
+Test Environment: 	Vector implementation(N=3,T=int32)
+
+  testset:		fill
+  4/4 tests passed
+
+  inline tests
+
+Test Environment: 	Vector implementation(N=2,T=int64)
+
+  testset:		fill
+  3/3 tests passed
+
+  inline tests
+
+Test Environment: 	Vector implementation(N=3,T=int64)
+
+  testset:		fill
+  4/4 tests passed
+```
+
 ### Future extensions
 I plan the following extensions:
 * A setup and teardown environment within the test environment that can be used to allocate and free heap variables.
 * Better / additional test statistics
-* Support for parameterized testsets or environments. Although this is already possible, the testset names and environment names are currently not parameterizable.
-
 If you have any other useful ideas, please let me know.
 
 
