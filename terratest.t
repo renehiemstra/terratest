@@ -1,5 +1,12 @@
 local C = terralib.includec("stdio.h")
 
+local runalltests = false
+for i=1,#arg do
+    if arg[i]=="testing=on" then
+       runalltests = true
+    end    
+end        
+       
 format = terralib.newlist()
 format.normal = "\27[0m"
 format.bold = "\27[1m"
@@ -67,7 +74,7 @@ end
 
 local function ProcessTestenv(self, lex)
     lex:expect("testenv") --open the testenv environment
-    
+
     -- treat case of parameterized testenv                       
     local isparametric = false                                   
     local params = terralib.newlist()                            
@@ -86,8 +93,18 @@ local function ProcessTestenv(self, lex)
     local testenvname = lex:expect(lex.string).value
     lex:expect("do")
     local luaexprs = lex:luastats() -- give control back to lua
-    lex:expect("end")
+    
+    --exit
+    local lasttoken = lex:expect("end")
+    local topfile = arg[0]
+    --exit with nothing if this is not the topfile
+    local runtests = runalltests and lasttoken.filename==topfile
+
     return function(envfun)
+        if not runtests then
+ 	    return
+	end
+
 	--reinitialize global variables
 	self.env = {scope1 = terralib.newlist(), scope2 = terralib.newlist()}
 	self.terrastmts = {notests = terralib.newlist(), scope1 = terralib.newlist(), scope2 = terralib.newlist()}
