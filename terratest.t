@@ -1,11 +1,16 @@
 local C = terralib.includec("stdio.h")
 
+local mt = getmetatable(_G)
 local runalltests = false
-for i=1,#arg do
-    if arg[i]=="testing=on" then
-       runalltests = true
-    end    
-end        
+local topfile = ""
+if mt.__declared["arg"]~=nil then
+    for i,v in pairs(arg) do
+        if v=="--test" or v=="-t" then
+            runalltests = true
+        end 
+    end 
+    topfile = arg[0]
+end
        
 format = terralib.newlist()
 format.normal = "\27[0m"
@@ -96,7 +101,6 @@ local function ProcessTestenv(self, lex)
     
     --exit
     local lasttoken = lex:expect("end")
-    local topfile = arg[0]
     --exit with nothing if this is not the topfile
     local runtests = runalltests and lasttoken.filename==topfile
 
