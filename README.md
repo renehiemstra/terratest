@@ -1,5 +1,13 @@
 # terratest
-terratest is a simple unittesting library for use in the [terra programming language](https://github.com/terralang/terra). It is written as a language extension of terra and provides several keywords: `test`, `testenv`, `testset`, and `terradef`. `test` signals a boolean lua/terra expression, `testenv` provides a safe environment for writing tests, which may be organized in `testset`'s. Finally, `terradef` represents a block of terra code. 
+terratest is a simple unittesting library for use in the [terra programming language](https://github.com/terralang/terra). It is written as a language extension of terra and provides several keywords: `test`, `testenv`, `testset`, and `terradef`. `test` signals a boolean lua/terra expression, `testenv` provides a safe environment for writing tests, which may be organized in `testset`'s. Finally, `terradef` represents a block of terra code.
+
+The design is kept simple and allows for
+* Inline testing, directly in your code
+* Scoped evaluation of tests inside code blocks `testset` and `testenv`
+* Tests and testsets inside `testenv` are only run if the command-line-option `testing=on` is passed to terra
+* `testset` and `testenv` can be parameterized by lua code
+
+The keyword `test` always expects a boolean result.
 
 ## Installation and use
 Simply copy paste the file `terratest` into your folder and use the library by means of the statement
@@ -49,6 +57,10 @@ testenv "my test environement" do
   test a+b+c==15 --false
   test a+b+c==x+y+11
 end 
+```
+To evaluate the tests in the testenvironment, you need to run terra with the command-line-option `testing=on`
+```
+terra test3.t testing=on
 ```
 which prints out
 ```
@@ -226,7 +238,4 @@ Test Environment: 	Vector implementation(N=3,T=int64)
 ### Future extensions
 I plan the following extensions:
 * A setup and teardown environment within the test environment that can be used to allocate and free heap variables.
-* Better / additional test statistics
-If you have any other useful ideas, please let me know.
-
-
+* Better / additional test statistics.
