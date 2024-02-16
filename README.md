@@ -58,9 +58,9 @@ testenv "my test environement" do
   test a+b+c==x+y+11
 end 
 ```
-To evaluate the tests in the testenvironment, you need to run terra with the command-line-option `testing=on`
+To evaluate the tests in the testenvironment, you need to run terra with the command-line-option `--test` or `-t`
 ```
-terra test3.t testing=on
+terra test3.t --test
 ```
 which prints out
 ```
