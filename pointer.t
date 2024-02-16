@@ -10,7 +10,12 @@ end
 testenv "pointer" do
      terradef
         var x = 0.0
-	set(&x)
      end
-     test x == 1.0
+
+    testset "pointer set value" do
+	terradef
+	    set(&x)
+	end
+        test x == 1.0
+    end
 end
