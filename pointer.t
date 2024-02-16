@@ -18,4 +18,8 @@ testenv "pointer" do
 	end
         test x == 1.0
     end
+
+    testset "pointer is reset in every testset" do
+	test x == 0.0
+    end
 end
