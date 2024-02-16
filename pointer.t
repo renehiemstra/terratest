@@ -8,9 +8,9 @@ terra set(p: &double)
 end
 
 testenv "pointer" do
-     terradef
+    terradef
         var x = 0.0
-     end
+    end
 
     testset "pointer set value" do
 	terradef
