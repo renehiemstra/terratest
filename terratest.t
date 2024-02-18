@@ -221,7 +221,7 @@ local function ProcessTestset(self, lex)
 end
 
 local function ProcessTerrastats(self, lex)
-    lex:expect("terradef")
+    lex:expect("terracode")
     local terrastmts = lex:terrastats()
     lex:expect("end")
     return function(envfun)
@@ -291,7 +291,7 @@ end
 
 local testlang = {
     name = "unittestlang";
-    entrypoints = {"testenv","testset","test","terradef"};
+    entrypoints = {"testenv","testset","test","terracode"};
     keywords = {};
     scopelevel = 0;
     tests = terralib.newlist();
@@ -304,7 +304,7 @@ local testlang = {
 	if lex:matches("testset") then
 	    return ProcessTestset(self, lex)
         end
-	if lex:matches("terradef") then
+	if lex:matches("terracode") then
 	    return ProcessTerrastats(self, lex)
 	end
 	if lex:matches("test") then
