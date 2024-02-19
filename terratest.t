@@ -313,12 +313,28 @@ local testlang = {
     end;
 }
 
+function printtable(table)
+    for i,s in pairs(table) do
+	print(i)
+	print("\n")
+	print(s)
+	print("\n")
+    end
+end
+
 function setenv(env, stmts)
     for i,s in pairs(stmts.tree.statements) do
+	--variables that are directly initialized
 	if s.lhs~=nil then
             local name = s.lhs[1].name
             local sym = s.lhs[1].symbol
             env[name] = sym 
+	end
+	--variables that are allocated
+	if s.name~=nil and s.symbol~=nil then
+	    local name = s.name
+	    local sym = s.symbol
+	    env[name] = sym
 	end
     end 
 end
